@@ -647,7 +647,7 @@ const App: React.FC = () => {
   };
   
   const renderSection = (title: string, description: string, children: React.ReactNode) => (
-    <div className="bg-white/50 p-6 rounded-lg border border-sky-200 mt-6">
+    <div className="bg-white/50 p-3 sm:p-6 rounded-lg border border-sky-200 mt-6">
       <h2 className="text-2xl font-bold text-sky-800 font-serif">{title}</h2>
       <p className="text-slate-600 mt-1 mb-4">{description}</p>
       {children}
@@ -970,7 +970,7 @@ const App: React.FC = () => {
     );
 
     return (
-    <div className="p-4 relative pb-24">
+    <div className="p-2 sm:p-4 relative pb-24">
         {isMultiDeleteMode && multiDeleteControlBar}
 
         {storyHistory.length === 0 ? (
@@ -979,7 +979,7 @@ const App: React.FC = () => {
             </div>
         ) : (
             <>
-                <div className={`bg-white/60 p-6 rounded-lg leading-relaxed min-h-[300px] ${isMultiDeleteMode ? 'cursor-pointer' : ''}`}>
+                <div className={`bg-white/60 p-3 sm:p-6 rounded-lg leading-relaxed min-h-[300px] ${isMultiDeleteMode ? 'cursor-pointer' : ''}`}>
                     {storyHistory.map((part, index) => {
                         const isLastSegment = index === storyHistory.length - 1;
                         
@@ -1204,7 +1204,7 @@ const App: React.FC = () => {
   const { result: currentResult, name: currentName } = getCurrentEditingResearch();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-100 text-slate-800 p-4 sm:p-6 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-100 text-slate-800 p-2 sm:p-6 md:p-8">
       <div className="max-w-4xl mx-auto">
         <header className="text-center mb-8">
           <h1 className="text-5xl md:text-6xl font-bold font-serif text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600">AI夢小説メーカー</h1>
