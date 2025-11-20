@@ -1075,7 +1075,7 @@ const App: React.FC = () => {
                                         </button>
                                         
                                         {isMenuOpen && (
-                                            <div className="absolute bottom-full left-0 w-full mb-3 bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden z-20 animate-fade-in-up origin-bottom">
+                                            <div className="absolute bottom-full right-0 w-[calc(200%+0.5rem)] md:left-0 md:right-auto md:w-full mb-3 bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden z-20 animate-fade-in-up origin-bottom">
                                                 
                                                 {/* Section 1: Actions */}
                                                 <div className="p-4 bg-white">
