@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback, useId, useRef, useEffect } from 'react';
+import React, { useState, useId, useRef, useEffect } from 'react';
 import { Tab } from './constants';
 import TabButton from './components/TabButton';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -722,7 +722,7 @@ const App: React.FC = () => {
               value={storyDirection}
               onChange={(e) => setStoryDirection(e.target.value)}
               placeholder="例：魔法が廃れた世界で、古代の力を再発見する若者の冒険譚。ジャンルはファンタジー、恋愛要素あり。"
-              className="w-full h-24 p-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400"
+              className="w-full h-32 p-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400"
             />
             <div className="mt-4">
               <label className="block text-sm font-medium text-slate-700">一回あたりの文字数</label>
@@ -750,7 +750,7 @@ const App: React.FC = () => {
                 <label className="block text-sm font-medium text-slate-700">文脈の読み込みブロック数</label>
                 <p className="text-xs text-slate-500 mb-2">物語の続きを生成する際に、AIがどれだけ前のブロックまでを文脈として読み込むか設定します。</p>
                 <div className="flex flex-wrap gap-x-6 gap-y-2">
-                  {[4, 8, 12].map(count => (
+                  {[4, 8, 12, 1000].map(count => (
                     <div key={count} className="flex items-center">
                       <input
                         id={`${formId}-lookback-${count}`}
@@ -761,7 +761,7 @@ const App: React.FC = () => {
                         className="h-4 w-4 text-sky-600 border-gray-300 focus:ring-sky-500"
                       />
                       <label htmlFor={`${formId}-lookback-${count}`} className="ml-2 block text-sm text-slate-900">
-                        {count} ブロック
+                        {count === 1000 ? '全文' : `${count} ブロック`}
                       </label>
                     </div>
                   ))}
@@ -1238,7 +1238,7 @@ const App: React.FC = () => {
             <p className="mt-2">
                 Created by <a href="https://x.com/skysound98" target="_blank" rel="noopener noreferrer" className="text-sky-600 hover:underline">@skysound98</a>
             </p>
-            <p className="mt-2">v1.4</p>
+            <p className="mt-2">v1.5</p>
         </footer>
       </div>
       {showScrollToBottomButton && (
