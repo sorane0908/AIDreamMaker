@@ -237,22 +237,59 @@ export const rewriteStory = async (
   apiKey: string,
   lastSegment: string,
   rewriteInstruction: string,
+  characters: Character[],
+  history: string[],
+  historyLookbackCount: number,
+  researchSource: ResearchResult | null,
+  researchCharacter1: ResearchResult | null,
+  researchCharacter2: ResearchResult | null,
   modelName: StoryModel,
   thinkingBudget: number
 ): Promise<StoryGenerationResult> => {
   const ai = new GoogleGenAI({ apiKey });
-  const prompt = `プロの編集者として、以下の指示に従い文章を書き直せ。物語の筋は維持する。
+
+  // Format characters
+  const charactersDetails = characters.map(c => {
+      const details = [];
+      if (c.freeText) details.push(`自由記述: ${c.freeText}`);
+      if (c.personality) details.push(`性格: ${c.personality}`);
+      if (c.ability) details.push(`能力: ${c.ability}`);
+      return `- ${c.name}: ${details.join('; ')}`;
+  }).join('\n');
+
+  // Format history context
+  const recentHistory = history.length > historyLookbackCount ? history.slice(-historyLookbackCount) : history;
+
+  const prompt = `プロの編集者として、以下の設定と文脈を踏まえ、指示に従って対象の文章を書き直せ。
+
+# 設定
+## 登場人物
+${charactersDetails || "指定なし"}
+
+## 参考情報(原作)
+${researchSource?.text || "なし"}
+
+## 参考情報(キャラ1)
+${researchCharacter1?.text || "なし"}
+
+## 参考情報(キャラ2)
+${researchCharacter2?.text || "なし"}
+
+# これまでの物語（文脈）
+${recentHistory.join('\n\n') || "（文脈なし）"}
+
+# 書き直す対象の文章（元の文章）
+${lastSegment}
+
+# 修正指示
+${rewriteInstruction}
 
 # ルール
+- 物語の筋（プロット）は維持すること。ただし指示で変更が求められている場合は従うこと。
+- キャラクターの性格や口調設定を厳守すること。
 - 書き直した物語の本文には、必ず改行を適宜含めてください。段落と段落の間には空行を一つ入れてください。
 - 文章の結びは、「～だった。」「～だろう。」のような過去形や推量形を避け、現在の瞬間の描写で締めくくること。
 - 出力は{story: string, suggestions: string[]}のJSON形式。
-
-# 元の文章
-${lastSegment}
-
-# 指示
-${rewriteInstruction}
 `;
 
   const config: any = {

@@ -1,4 +1,3 @@
-
 import React, { useState, useId, useRef, useEffect } from 'react';
 import { Tab } from './constants';
 import TabButton from './components/TabButton';
@@ -410,7 +409,23 @@ const App: React.FC = () => {
         setSuggestions([]);
         try {
             const lastSegment = storyHistory[storyHistory.length - 1];
-            const result = await rewriteStory(apiKey, lastSegment, userDirective, selectedModel, thinkingBudget);
+            // Context excludes the last segment which is being rewritten
+            const contextHistory = storyHistory.slice(0, -1);
+            
+            const result = await rewriteStory(
+              apiKey, 
+              lastSegment, 
+              userDirective, 
+              characters,
+              contextHistory,
+              historyLookbackCount,
+              researchSourceResult,
+              researchCharacterResult1,
+              researchCharacterResult2,
+              selectedModel, 
+              thinkingBudget
+            );
+            
             const newHistory = [...storyHistory.slice(0, -1), result.story];
             setStoryHistory(newHistory);
             setUserDirective('');
@@ -1238,7 +1253,7 @@ const App: React.FC = () => {
             <p className="mt-2">
                 Created by <a href="https://x.com/skysound98" target="_blank" rel="noopener noreferrer" className="text-sky-600 hover:underline">@skysound98</a>
             </p>
-            <p className="mt-2">v1.5</p>
+            <p className="mt-2">v1.6</p>
         </footer>
       </div>
       {showScrollToBottomButton && (
