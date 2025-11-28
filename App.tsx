@@ -1,3 +1,5 @@
+
+
 import React, { useState, useId, useRef, useEffect } from 'react';
 import { Tab } from './constants';
 import TabButton from './components/TabButton';
@@ -306,7 +308,10 @@ const App: React.FC = () => {
             finalTopic = `${topic} (${researchSourceTopic})`;
         }
         
-        const result = await researchWithGoogle(apiKey, finalTopic);
+        // Decide research type based on the function argument
+        const searchType = type === 'source' ? 'source' : 'character';
+        const result = await researchWithGoogle(apiKey, finalTopic, searchType);
+
         switch (type) {
           case 'source':
             setResearchSourceResult(result);

@@ -4,13 +4,18 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { GroundingSource, Character, ResearchResult, StoryLength, StoryGenerationResult, StoryModel } from '../types';
 
-export const researchWithGoogle = async (apiKey: string, prompt: string): Promise<ResearchResult> => {
+export const researchWithGoogle = async (apiKey: string, prompt: string, type: 'source' | 'character' = 'source'): Promise<ResearchResult> => {
     const ai = new GoogleGenAI({ apiKey });
+
+    const focusInstruction = type === 'source'
+        ? "物語の核心（プロット、世界観、独自の用語や設定）に絞る。"
+        : "キャラクターの詳細（性格、口調、行動原理、動機、過去の経歴、トラウマや重要な出来事）に絞る。世界観やあらすじの解説は、キャラクターの理解に必須な場合を除き省略する。";
+
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: `あなたは情報を要約するAIです。後続のAIが直接読み込むことを想定し、以下の指示に従ってトピックを要約してください。
 # 指示
-- 物語の核心（プロット、キャラクターの動機、世界観）に絞る。
+- ${focusInstruction}
 - 箇条書きで事実のみを記述する。
 - 「以下は～に関する情報です」のような前置きや、解説、結びの言葉は一切含めない。
 - 出力は箇条書きから始めること。
@@ -133,13 +138,13 @@ ${storyDirection || "指定なし"}
 ## 登場人物
 ${charactersDetails || "指定なし"}
 
-## 参考情報(原作)
+## 参考情報(原作・世界観)
 ${researchSource?.text || "なし"}
 
-## 参考情報(キャラ1)
+## 参考情報(キャラ1詳細)
 ${researchCharacter1?.text || "なし"}
 
-## 参考情報(キャラ2)
+## 参考情報(キャラ2詳細)
 ${researchCharacter2?.text || "なし"}
 
 # これまでの物語
