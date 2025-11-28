@@ -1258,7 +1258,7 @@ const App: React.FC = () => {
             <p className="mt-2">
                 Created by <a href="https://x.com/skysound98" target="_blank" rel="noopener noreferrer" className="text-sky-600 hover:underline">@skysound98</a>
             </p>
-            <p className="mt-2">v1.6</p>
+            <p className="mt-2">v1.7</p>
         </footer>
       </div>
       {showScrollToBottomButton && (
