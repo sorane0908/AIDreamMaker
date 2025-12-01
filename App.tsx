@@ -1,3 +1,4 @@
+
 import React, { useState, useId, useRef, useEffect } from 'react';
 import { Tab } from './constants';
 import TabButton from './components/TabButton';
@@ -359,6 +360,18 @@ const App: React.FC = () => {
       setError('「方向性」「キャラクター(最低1人)」「プロローグ」をすべて入力してください。');
       return;
     }
+
+    // Check if there is an existing history (draft loaded)
+    if (storyHistory.length > 0) {
+        const shouldResume = window.confirm("保存された物語の続き（ドラフト）が読み込まれています。続きから再開しますか？\n\n「キャンセル」を選択すると、現在の設定で物語を最初（プロローグ）から作り直します（これまでの履歴は消去されます）。");
+        if (shouldResume) {
+            setError(null);
+            setSuggestions([]); // Reset suggestions or fetch new ones if needed
+            setActiveTab(Tab.Story);
+            return;
+        }
+    }
+
     setError(null);
     const processedPrologue = prologue.replace(/{{char}}/g, "私");
     setStoryHistory([processedPrologue]);
@@ -555,6 +568,16 @@ const App: React.FC = () => {
     return `${year}${month}${day}-${hours}${minutes}`;
   };
 
+  const getFullTimestamp = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    return `${year}${month}${day}-${hours}${minutes}`;
+  };
+
   const handleExportSettings = () => {
     const settings: ExportedSettings = {
       storyDirection,
@@ -567,6 +590,8 @@ const App: React.FC = () => {
       selectedModel,
       historyLookbackCount,
       thinkingBudget,
+      // Note: We don't include storyHistory here by default for "Settings", 
+      // but users can use the Draft export for that.
     };
     const dataStr = JSON.stringify(settings, null, 2);
     const blob = new Blob([dataStr], { type: "application/json" });
@@ -581,6 +606,37 @@ const App: React.FC = () => {
     URL.revokeObjectURL(url);
   };
   
+  const handleExportDraft = () => {
+    if (storyHistory.length === 0) {
+        setError("保存する物語がありません。");
+        return;
+    }
+    const settings: ExportedSettings = {
+      storyDirection,
+      storyLength,
+      characters,
+      prologue,
+      researchSourceResult,
+      researchCharacterResult1,
+      researchCharacterResult2,
+      selectedModel,
+      historyLookbackCount,
+      thinkingBudget,
+      storyHistory, // Include the story history
+    };
+    const dataStr = JSON.stringify(settings, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    
+    link.download = `yume-draft_${getFullTimestamp()}.json`;
+    link.href = url;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const handleExportStory = () => {
     if (storyHistory.length === 0) {
         setError("エクスポートする物語がありません。");
@@ -623,8 +679,18 @@ const App: React.FC = () => {
         setSelectedModel(parsed.selectedModel || 'gemini-2.5-flash');
         setHistoryLookbackCount(parsed.historyLookbackCount || 4);
         setThinkingBudget(parsed.thinkingBudget || 0);
+
+        // Load story history if present
+        if (parsed.storyHistory && Array.isArray(parsed.storyHistory)) {
+            setStoryHistory(parsed.storyHistory);
+            // Optionally, we could jump to the story tab, but staying on settings is safer 
+            // to let the user review imported settings first.
+            alert("設定と物語の中断データを正常に読み込みました。\n「物語を紡ぎ始める」ボタンを押すと、続きから再開できます。");
+        } else {
+            alert("設定ファイルを正常に読み込みました。");
+        }
+        
         setError(null);
-        alert("設定ファイルを正常に読み込みました。");
       } catch (err) {
         console.error("Failed to import settings:", err);
         setError("設定ファイルの読み込みに失敗しました。ファイルが破損しているか、形式が正しくありません。");
@@ -645,7 +711,10 @@ const App: React.FC = () => {
           setActiveTab(Tab.Settings);
           setStoryDirection('');
           setStoryLength('normal');
-          setCharacters([defaultCharacter]);
+          
+          // Force new object and new ID to ensure DOM reconstruction and clearing
+          setCharacters([{ ...defaultCharacter, id: `char-${Date.now()}` }]);
+          
           setPrologue('');
           setSelectedModel('gemini-2.5-flash');
           setHistoryLookbackCount(4);
@@ -661,6 +730,11 @@ const App: React.FC = () => {
           setUserDirective('');
           setError(null);
           setIsMultiDeleteMode(false);
+          setEditingResearchType(null);
+          setResearching(null);
+          
+          // Ensure we go to the top to show the cleared form
+          window.scrollTo({ top: 0, behavior: 'smooth' });
       }
   };
   
@@ -1190,10 +1264,14 @@ const App: React.FC = () => {
                 )}
 
                 {storyHistory.length > 0 && !isMultiDeleteMode && (
-                  <div className="mt-8 border-t border-sky-200 pt-6 flex justify-center dark:border-sky-800">
+                  <div className="mt-8 border-t border-sky-200 pt-6 flex justify-center gap-4 dark:border-sky-800">
                     <button onClick={handleExportStory} className="flex items-center justify-center gap-2 px-4 py-3 bg-white border border-sky-300 text-sky-800 rounded-lg hover:bg-sky-100 transition-colors dark:bg-slate-700 dark:border-slate-600 dark:text-sky-300 dark:hover:bg-slate-600">
                         <DownloadIcon className="w-5 h-5" />
-                        <span>物語を保存</span>
+                        <span>物語を保存(txt)</span>
+                    </button>
+                    <button onClick={handleExportDraft} className="flex items-center justify-center gap-2 px-4 py-3 bg-white border border-sky-300 text-sky-800 rounded-lg hover:bg-sky-100 transition-colors dark:bg-slate-700 dark:border-slate-600 dark:text-sky-300 dark:hover:bg-slate-600">
+                        <DownloadIcon className="w-5 h-5" />
+                        <span>中断データを保存(json)</span>
                     </button>
                   </div>
                 )}
@@ -1256,7 +1334,7 @@ const App: React.FC = () => {
             <p className="mt-2">
                 Created by <a href="https://x.com/skysound98" target="_blank" rel="noopener noreferrer" className="text-sky-600 hover:underline dark:text-sky-400">@skysound98</a>
             </p>
-            <p className="mt-2">v1.7</p>
+            <p className="mt-2">v1.8</p>
         </footer>
       </div>
       {showScrollToBottomButton && (

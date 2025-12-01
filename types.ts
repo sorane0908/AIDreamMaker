@@ -36,6 +36,7 @@ export interface ExportedSettings {
   selectedModel?: StoryModel;
   historyLookbackCount?: number;
   thinkingBudget?: number;
+  storyHistory?: string[];
 }
 
 export interface StoryGenerationResult {
