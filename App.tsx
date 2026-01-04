@@ -470,6 +470,7 @@ const App: React.FC = () => {
         setError("削除できる物語のブロックがありません。");
         return;
     }
+    setIsMenuOpen(false); // Close immediately for snappier UI
     await handleApiCall(async () => {
         setIsLoading(true);
         setLoadingMessage('物語を1つ前に戻し、新しい展開を考えています...');
@@ -484,7 +485,6 @@ const App: React.FC = () => {
             handleApiError(e, "ブロックの削除中にエラーが発生しました。");
         } finally {
             setIsLoading(false);
-            setIsMenuOpen(false);
         }
     });
   };
@@ -492,6 +492,7 @@ const App: React.FC = () => {
   const handleJustSuggest = async () => {
     if (storyHistory.length === 0) return;
     
+    setIsMenuOpen(false); // Close immediately for snappier UI
     await handleApiCall(async () => {
         setIsLoading(true);
         setLoadingMessage('現在の物語から、新しい展開を考えています...');
@@ -504,7 +505,6 @@ const App: React.FC = () => {
             handleApiError(e, "展開の提案中にエラーが発生しました。");
         } finally {
             setIsLoading(false);
-            setIsMenuOpen(false);
         }
     });
   };
@@ -590,8 +590,6 @@ const App: React.FC = () => {
       selectedModel,
       historyLookbackCount,
       thinkingBudget,
-      // Note: We don't include storyHistory here by default for "Settings", 
-      // but users can use the Draft export for that.
     };
     const dataStr = JSON.stringify(settings, null, 2);
     const blob = new Blob([dataStr], { type: "application/json" });
@@ -622,7 +620,7 @@ const App: React.FC = () => {
       selectedModel,
       historyLookbackCount,
       thinkingBudget,
-      storyHistory, // Include the story history
+      storyHistory, 
     };
     const dataStr = JSON.stringify(settings, null, 2);
     const blob = new Blob([dataStr], { type: "application/json" });
@@ -680,11 +678,8 @@ const App: React.FC = () => {
         setHistoryLookbackCount(parsed.historyLookbackCount || 4);
         setThinkingBudget(parsed.thinkingBudget || 0);
 
-        // Load story history if present
         if (parsed.storyHistory && Array.isArray(parsed.storyHistory)) {
             setStoryHistory(parsed.storyHistory);
-            // Optionally, we could jump to the story tab, but staying on settings is safer 
-            // to let the user review imported settings first.
             alert("設定と物語の中断データを正常に読み込みました。\n「物語を紡ぎ始める」ボタンを押すと、続きから再開できます。");
         } else {
             alert("設定ファイルを正常に読み込みました。");
@@ -707,14 +702,10 @@ const App: React.FC = () => {
   const handleResetState = () => {
       if (window.confirm('本当に最初からやり直しますか？保存されている設定と物語はすべて削除されます。')) {
           localStorage.removeItem(APP_STATE_STORAGE_KEY);
-          // Reset all states to default
           setActiveTab(Tab.Settings);
           setStoryDirection('');
           setStoryLength('normal');
-          
-          // Force new object and new ID to ensure DOM reconstruction and clearing
           setCharacters([{ ...defaultCharacter, id: `char-${Date.now()}` }]);
-          
           setPrologue('');
           setSelectedModel('gemini-2.5-flash');
           setHistoryLookbackCount(4);
@@ -732,8 +723,6 @@ const App: React.FC = () => {
           setIsMultiDeleteMode(false);
           setEditingResearchType(null);
           setResearching(null);
-          
-          // Ensure we go to the top to show the cleared form
           window.scrollTo({ top: 0, behavior: 'smooth' });
       }
   };
@@ -1334,7 +1323,7 @@ const App: React.FC = () => {
             <p className="mt-2">
                 Created by <a href="https://x.com/skysound98" target="_blank" rel="noopener noreferrer" className="text-sky-600 hover:underline dark:text-sky-400">@skysound98</a>
             </p>
-            <p className="mt-2">v1.81</p>
+            <p className="mt-2">v1.9</p>
         </footer>
       </div>
       {showScrollToBottomButton && (
