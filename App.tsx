@@ -27,7 +27,7 @@ const App: React.FC = () => {
   const [storyLength, setStoryLength] = useState<StoryLength>('normal');
   const [characters, setCharacters] = useState<Character[]>([defaultCharacter]);
   const [prologue, setPrologue] = useState('');
-  const [selectedModel, setSelectedModel] = useState<StoryModel>('gemini-3-flash-preview');
+  const [selectedModel, setSelectedModel] = useState<StoryModel>('gemini-2.5-flash');
   const [historyLookbackCount, setHistoryLookbackCount] = useState<number>(4);
   const [thinkingBudget, setThinkingBudget] = useState<number>(0);
 
@@ -81,7 +81,7 @@ const App: React.FC = () => {
         setStoryLength(savedState.storyLength || 'normal');
         setCharacters(savedState.characters && savedState.characters.length > 0 ? savedState.characters : [defaultCharacter]);
         setPrologue(savedState.prologue || '');
-        setSelectedModel(savedState.selectedModel || 'gemini-3-flash-preview');
+        setSelectedModel(savedState.selectedModel || 'gemini-2.5-flash');
         setHistoryLookbackCount(savedState.historyLookbackCount || 4);
         setThinkingBudget(savedState.thinkingBudget || 0);
         setResearchSourceTopic(savedState.researchSourceTopic || '');
@@ -674,7 +674,7 @@ const App: React.FC = () => {
         setResearchSourceResult(parsed.researchSourceResult);
         setResearchCharacterResult1(parsed.researchCharacterResult1 || parsed.researchCharacterResult || null);
         setResearchCharacterResult2(parsed.researchCharacterResult2 || null);
-        setSelectedModel(parsed.selectedModel || 'gemini-3-flash-preview');
+        setSelectedModel(parsed.selectedModel || 'gemini-2.5-flash');
         setHistoryLookbackCount(parsed.historyLookbackCount || 4);
         setThinkingBudget(parsed.thinkingBudget || 0);
 
@@ -707,7 +707,7 @@ const App: React.FC = () => {
           setStoryLength('normal');
           setCharacters([{ ...defaultCharacter, id: `char-${Date.now()}` }]);
           setPrologue('');
-          setSelectedModel('gemini-3-flash-preview');
+          setSelectedModel('gemini-2.5-flash');
           setHistoryLookbackCount(4);
           setThinkingBudget(0);
           setResearchSourceTopic('');
@@ -1327,7 +1327,7 @@ const App: React.FC = () => {
             <p className="mt-2">
                 Created by <a href="https://x.com/skysound98" target="_blank" rel="noopener noreferrer" className="text-sky-600 hover:underline dark:text-sky-400">@skysound98</a>
             </p>
-            <p className="mt-2">v1.9</p>
+            <p className="mt-2">v2.0</p>
         </footer>
       </div>
       {showScrollToBottomButton && (
