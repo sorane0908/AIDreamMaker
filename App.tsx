@@ -27,7 +27,7 @@ const App: React.FC = () => {
   const [storyLength, setStoryLength] = useState<StoryLength>('normal');
   const [characters, setCharacters] = useState<Character[]>([defaultCharacter]);
   const [prologue, setPrologue] = useState('');
-  const [selectedModel, setSelectedModel] = useState<StoryModel>('gemini-2.5-flash');
+  const [selectedModel, setSelectedModel] = useState<StoryModel>('gemini-3-flash-preview');
   const [historyLookbackCount, setHistoryLookbackCount] = useState<number>(4);
   const [thinkingBudget, setThinkingBudget] = useState<number>(0);
 
@@ -81,7 +81,7 @@ const App: React.FC = () => {
         setStoryLength(savedState.storyLength || 'normal');
         setCharacters(savedState.characters && savedState.characters.length > 0 ? savedState.characters : [defaultCharacter]);
         setPrologue(savedState.prologue || '');
-        setSelectedModel(savedState.selectedModel || 'gemini-2.5-flash');
+        setSelectedModel(savedState.selectedModel || 'gemini-3-flash-preview');
         setHistoryLookbackCount(savedState.historyLookbackCount || 4);
         setThinkingBudget(savedState.thinkingBudget || 0);
         setResearchSourceTopic(savedState.researchSourceTopic || '');
@@ -674,7 +674,7 @@ const App: React.FC = () => {
         setResearchSourceResult(parsed.researchSourceResult);
         setResearchCharacterResult1(parsed.researchCharacterResult1 || parsed.researchCharacterResult || null);
         setResearchCharacterResult2(parsed.researchCharacterResult2 || null);
-        setSelectedModel(parsed.selectedModel || 'gemini-2.5-flash');
+        setSelectedModel(parsed.selectedModel || 'gemini-3-flash-preview');
         setHistoryLookbackCount(parsed.historyLookbackCount || 4);
         setThinkingBudget(parsed.thinkingBudget || 0);
 
@@ -707,7 +707,7 @@ const App: React.FC = () => {
           setStoryLength('normal');
           setCharacters([{ ...defaultCharacter, id: `char-${Date.now()}` }]);
           setPrologue('');
-          setSelectedModel('gemini-2.5-flash');
+          setSelectedModel('gemini-3-flash-preview');
           setHistoryLookbackCount(4);
           setThinkingBudget(0);
           setResearchSourceTopic('');
@@ -764,8 +764,10 @@ const App: React.FC = () => {
                         onChange={(e) => setSelectedModel(e.target.value as StoryModel)}
                         className="w-full p-2 mt-1 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
                     >
-                        <option value="gemini-2.5-flash">gemini-2.5-flash (高速)</option>
-                        <option value="gemini-2.5-pro">gemini-2.5-pro (高品質)</option>
+                        <option value="gemini-3-flash-preview">gemini-3-flash (最新・高速)</option>
+                        <option value="gemini-3-pro-preview">gemini-3-pro (最新・高品質)</option>
+                        <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+                        <option value="gemini-2.5-pro">gemini-2.5-pro</option>
                     </select>
                 </div>
                 <div>
@@ -1210,8 +1212,10 @@ const App: React.FC = () => {
                                                                 onClick={(e) => e.stopPropagation()}
                                                                 className="w-full p-2 text-sm bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-400 transition-shadow dark:bg-slate-800 dark:border-slate-600 dark:text-white"
                                                             >
-                                                                <option value="gemini-2.5-flash">gemini-2.5-flash (高速)</option>
-                                                                <option value="gemini-2.5-pro">gemini-2.5-pro (高品質)</option>
+                                                                <option value="gemini-3-flash-preview">gemini-3-flash (最新・高速)</option>
+                                                                <option value="gemini-3-pro-preview">gemini-3-pro (最新・高品質)</option>
+                                                                <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+                                                                <option value="gemini-2.5-pro">gemini-2.5-pro</option>
                                                             </select>
                                                         </div>
 

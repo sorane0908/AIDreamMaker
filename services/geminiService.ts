@@ -1,6 +1,4 @@
 
-
-
 import { GoogleGenAI, Type } from "@google/genai";
 import type { GroundingSource, Character, ResearchResult, StoryLength, StoryGenerationResult, StoryModel } from '../types';
 
@@ -12,7 +10,7 @@ export const researchWithGoogle = async (apiKey: string, prompt: string, type: '
         : "キャラクターの詳細（性格、口調、行動原理、動機、過去の経歴、トラウマや重要な出来事）に絞る。世界観やあらすじの解説は、キャラクターの理解に必須な場合を除き省略する。";
 
     const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3-flash-preview",
         contents: `あなたは情報を要約するAIです。後続のAIが直接読み込むことを想定し、以下の指示に従ってトピックを要約してください。
 # 指示
 - ${focusInstruction}
@@ -60,7 +58,7 @@ ${researchText || 'なし'}
 `;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
+    model: 'gemini-3-flash-preview',
     contents: prompt,
     config: {
       responseMimeType: "application/json",
@@ -351,7 +349,7 @@ ${recentHistory.join('\n\n')}
 # 提案
 `;
   const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
+    model: 'gemini-3-flash-preview',
     contents: prompt,
     config: {
       responseMimeType: "application/json",
